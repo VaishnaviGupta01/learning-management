@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /** MockMvc helpers shared by the end-to-end API tests. Every test creates its own users/courses. */
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(FakeMlClient.Config.class)
 public abstract class IntegrationTestSupport {
 
     protected static final String PASSWORD = "Password123!";

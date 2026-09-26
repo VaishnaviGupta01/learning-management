@@ -5,9 +5,13 @@ from datetime import datetime, timezone
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from . import knowledge, recommend
+
 SERVICE_NAME = "ml-service"
 
 app = FastAPI(title="LMS ML Service", version="0.1.0")
+app.include_router(knowledge.router)
+app.include_router(recommend.router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -67,6 +67,7 @@ CREATE TABLE topics (
     order_index INTEGER NOT NULL DEFAULT 0,
     difficulty VARCHAR(30) NOT NULL DEFAULT 'MEDIUM' CHECK (difficulty IN ('EASY', 'MEDIUM', 'HARD')),
     estimated_minutes INTEGER,
+    importance DOUBLE PRECISION NOT NULL DEFAULT 0.5,
     created_at TIMESTAMP(6) WITH TIME ZONE NOT NULL,
     updated_at TIMESTAMP(6) WITH TIME ZONE NOT NULL,
     CONSTRAINT fk_topics_module_id FOREIGN KEY (module_id) REFERENCES course_modules (id)
@@ -253,7 +254,7 @@ CREATE TABLE student_topic_knowledge (
     student_id BIGINT NOT NULL,
     topic_id BIGINT NOT NULL,
     mastery_score DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-    classification VARCHAR(30) NOT NULL DEFAULT 'NOT_STARTED' CHECK (classification IN ('NOT_STARTED', 'WEAK', 'DEVELOPING', 'STRONG')),
+    classification VARCHAR(30) NOT NULL DEFAULT 'NOT_STARTED' CHECK (classification IN ('NOT_STARTED', 'WEAK', 'NEEDS_PRACTICE', 'MODERATE', 'STRONG')),
     attempts_count INTEGER NOT NULL DEFAULT 0,
     correct_count INTEGER NOT NULL DEFAULT 0,
     last_assessed_at TIMESTAMP(6) WITH TIME ZONE,

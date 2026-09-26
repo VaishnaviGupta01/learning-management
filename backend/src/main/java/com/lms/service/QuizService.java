@@ -58,16 +58,21 @@ public class QuizService {
     private final TopicRepository topicRepository;
     private final UserRepository userRepository;
     private final CourseService courseService;
+    private final ProgressService progressService;
+    private final KnowledgeService knowledgeService;
 
     public QuizService(QuizRepository quizRepository, QuizAttemptRepository attemptRepository,
                        QuestionRepository questionRepository, TopicRepository topicRepository,
-                       UserRepository userRepository, CourseService courseService) {
+                       UserRepository userRepository, CourseService courseService,
+                       ProgressService progressService, KnowledgeService knowledgeService) {
         this.quizRepository = quizRepository;
         this.attemptRepository = attemptRepository;
         this.questionRepository = questionRepository;
         this.topicRepository = topicRepository;
         this.userRepository = userRepository;
         this.courseService = courseService;
+        this.progressService = progressService;
+        this.knowledgeService = knowledgeService;
     }
 
     // ------------------------------------------------------------------ quiz management
@@ -191,6 +196,7 @@ public class QuizService {
     /**
      * Grades an attempt. Only question ids and selected option ids are read from the client;
      * correctness comes exclusively from {@link QuestionOption#isCorrect()} in the database.
+     * Afterwards updates course progress / study time and recalculates knowledge for every topic in the quiz.
      */
     public AttemptResultResponse submitAttempt(Long attemptId, SubmitAttemptRequest request, UserPrincipal user) {
         QuizAttempt attempt = attemptRepository.findById(attemptId)
@@ -253,6 +259,12 @@ public class QuizService {
                 : score.multiply(HUNDRED).divide(maxScore, 2, RoundingMode.HALF_UP));
         attempt.setSubmittedAt(now);
         attemptRepository.flush();
+
+        progressService.updateAfterQuiz(attempt);
+        Set<Long> touchedTopics = quiz.getQuizQuestions().stream()
+                .map(qq -> qq.getQuestion().getTopic().getId())
+                .collect(Collectors.toCollection(java.util.LinkedHashSet::new));
+        knowledgeService.recalculate(user.getId(), touchedTopics);
         return toResult(attempt);
     }
 

@@ -200,6 +200,9 @@ public class TopicService {
         topic.setTitle(request.title().trim());
         topic.setDescription(request.description());
         topic.setEstimatedMinutes(request.estimatedMinutes());
+        if (request.importance() != null) {
+            topic.setImportance(request.importance());
+        }
         if (request.difficulty() != null) {
             topic.setDifficulty(request.difficulty());
         } else if (topic.getDifficulty() == null) {

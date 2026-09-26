@@ -33,6 +33,11 @@ app:
   services:
     ml-url: ${ML_SERVICE_URL:http://localhost:8001}
     rag-url: ${RAG_SERVICE_URL:http://localhost:8002}
+    ml-timeout-ms: ${ML_SERVICE_TIMEOUT_MS:3000}
+  recommendations:
+    top-k: ${RECOMMENDATION_TOP_K:5}
+    # a prerequisite counts as complete at this mastery score (0.60 = MODERATE band)
+    prerequisite-mastery: ${PREREQUISITE_MASTERY_THRESHOLD:0.6}
   upload-dir: ${UPLOAD_DIR:./uploads}
 
 management:

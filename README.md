@@ -61,6 +61,26 @@ An initial admin is created from `ADMIN_EMAIL` / `ADMIN_PASSWORD` on startup (ad
 | Quizzes | `GET/POST /api/courses/{id}/quizzes`, `GET/DELETE /api/quizzes/{id}`, `PATCH /api/quizzes/{id}/publish` | write: instructor / admin |
 | Attempts | `POST /api/quizzes/{id}/attempts`, `POST /api/attempts/{id}/submit`, `GET /api/attempts/{id}`, `GET /api/attempts/me` | student |
 | Diagnostic | `POST /api/courses/{id}/diagnostic` (optional body `{"topicIds": [...]}`) | student |
+| Progress | `GET /api/students/me/progress` | student |
+| Knowledge | `GET /api/students/me/topics/knowledge?courseId=` | student |
+| Recommendations | `GET /api/students/me/recommendations?courseId=` (recomputes and stores) | student |
+
+Submitting a quiz updates course progress, logs a study session and recalculates knowledge for every topic in the quiz.
+
+## ML service
+
+| Endpoint | Formula |
+|---|---|
+| `POST /api/knowledge/score` | `0.4·diagnostic + 0.3·recent_quiz + 0.2·practice + 0.1·revision` (missing inputs are skipped and weights renormalised); bands STRONG ≥ 0.80, MODERATE ≥ 0.60, NEEDS_PRACTICE ≥ 0.40, else WEAK |
+| `POST /api/recommend` | `priority = 0.5·(1 − knowledge) + 0.3·importance + 0.2·urgency` |
+
+Weights and thresholds live in [ml-service/app/config.py](ml-service/app/config.py) and can be overridden with JSON env vars.
+Tests: `cd ml-service && pip install -r requirements-dev.txt && pytest`.
+
+## Database changes
+
+Hibernate adds new columns automatically but does not rewrite CHECK constraints. For a database created
+before Phase 6, apply [docs/migrations/V6_8__knowledge_bands_and_topic_importance.sql](docs/migrations/V6_8__knowledge_bands_and_topic_importance.sql) once.
 
 Errors use one JSON shape: `{timestamp, status, error, message, path, fieldErrors?}` with
 400 (validation / business rule), 401 (missing token or bad credentials), 403 (role/ownership), 404, 409 (duplicate / in use).
@@ -72,3 +92,6 @@ Errors use one JSON shape: `{timestamp, status, error, message, path, fieldError
 - [x] Phase 3: JWT authentication, role-based access, global error handling
 - [x] Phase 4: course / module / topic management, prerequisite graph with cycle detection
 - [x] Phase 5: question bank with AI review workflow, quizzes, server-side grading, diagnostics
+- [x] Phase 6: progress tracking (completion, accuracy, study sessions)
+- [x] Phase 7: knowledge model (ml-service scoring, per-topic mastery bands)
+- [x] Phase 8: recommendation engine with prerequisite gating

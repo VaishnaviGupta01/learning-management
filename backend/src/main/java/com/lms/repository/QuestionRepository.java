@@ -22,4 +22,11 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query("select q from Question q where q.topic.module.course.id = :courseId and q.status = :status")
     List<Question> findByCourseIdAndStatus(@Param("courseId") Long courseId, @Param("status") QuestionStatus status);
+
+    @Query("""
+            select q.topic.id as topicId, count(q) as total from Question q
+            where q.topic.module.course.id = :courseId and q.status = :status
+            group by q.topic.id""")
+    List<TopicStatsView.Count> countByCourseGroupedByTopic(@Param("courseId") Long courseId,
+                                                           @Param("status") QuestionStatus status);
 }

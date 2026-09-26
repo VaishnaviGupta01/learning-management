@@ -14,11 +14,12 @@ public record TopicResponse(
         int orderIndex,
         Difficulty difficulty,
         Integer estimatedMinutes,
+        double importance,
         List<Long> prerequisiteIds) {
 
     public static TopicResponse from(Topic t, List<Long> prerequisiteIds) {
         return new TopicResponse(t.getId(), t.getModule().getId(), t.getModule().getCourse().getId(),
                 t.getTitle(), t.getDescription(), t.getOrderIndex(), t.getDifficulty(), t.getEstimatedMinutes(),
-                prerequisiteIds);
+                t.getImportance(), prerequisiteIds);
     }
 }

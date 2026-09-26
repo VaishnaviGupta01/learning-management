@@ -31,6 +31,11 @@ public class Topic extends BaseEntity {
     @Column(name = "estimated_minutes")
     private Integer estimatedMinutes;
 
+    /** Instructor-set weight (0..1) used by the recommendation engine. */
+    @org.hibernate.annotations.ColumnDefault("0.5")
+    @Column(name = "importance", nullable = false)
+    private double importance = 0.5;
+
     public CourseModule getModule() {
         return module;
     }
@@ -77,5 +82,13 @@ public class Topic extends BaseEntity {
 
     public void setEstimatedMinutes(Integer estimatedMinutes) {
         this.estimatedMinutes = estimatedMinutes;
+    }
+
+    public double getImportance() {
+        return importance;
+    }
+
+    public void setImportance(double importance) {
+        this.importance = importance;
     }
 }
