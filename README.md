@@ -45,7 +45,30 @@ backend/src/main/java/com/lms/
 docs/SCHEMA.sql    reference DDL matching the entities
 ```
 
+## API (backend)
+
+All endpoints except `/api/auth/**` and `/api/health` need `Authorization: Bearer <token>`.
+An initial admin is created from `ADMIN_EMAIL` / `ADMIN_PASSWORD` on startup (admins cannot self-register).
+
+| Area | Endpoints | Who |
+|---|---|---|
+| Auth | `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/users/me` | public / any |
+| Courses | `GET/POST /api/courses`, `GET/PUT/DELETE /api/courses/{id}`, `PATCH /api/courses/{id}/publish?published=` | write: owning instructor or admin |
+| Modules | `GET/POST /api/courses/{id}/modules`, `PUT/DELETE /api/modules/{id}` | write: owning instructor or admin |
+| Topics | `POST /api/modules/{id}/topics`, `GET/PUT/DELETE /api/topics/{id}`, `GET /api/courses/{id}/topics` | write: owning instructor or admin |
+| Prerequisites | `GET/POST /api/topics/{id}/prerequisites`, `DELETE /api/topics/{id}/prerequisites/{prereqId}`, `GET /api/courses/{id}/learning-path` | write: owning instructor or admin |
+| Questions | `GET/POST /api/topics/{id}/questions`, `GET /api/questions/pending`, `GET/PUT/DELETE /api/questions/{id}`, `PATCH /api/questions/{id}/approve` / `reject` | instructor / admin |
+| Quizzes | `GET/POST /api/courses/{id}/quizzes`, `GET/DELETE /api/quizzes/{id}`, `PATCH /api/quizzes/{id}/publish` | write: instructor / admin |
+| Attempts | `POST /api/quizzes/{id}/attempts`, `POST /api/attempts/{id}/submit`, `GET /api/attempts/{id}`, `GET /api/attempts/me` | student |
+| Diagnostic | `POST /api/courses/{id}/diagnostic` (optional body `{"topicIds": [...]}`) | student |
+
+Errors use one JSON shape: `{timestamp, status, error, message, path, fieldErrors?}` with
+400 (validation / business rule), 401 (missing token or bad credentials), 403 (role/ownership), 404, 409 (duplicate / in use).
+
 ## Progress
 
 - [x] Phase 1: project setup, health endpoints, Docker, routing skeleton
 - [x] Phase 2: database schema, entities, repositories, role seed
+- [x] Phase 3: JWT authentication, role-based access, global error handling
+- [x] Phase 4: course / module / topic management, prerequisite graph with cycle detection
+- [x] Phase 5: question bank with AI review workflow, quizzes, server-side grading, diagnostics

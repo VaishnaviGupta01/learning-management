@@ -11,6 +11,8 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     List<Quiz> findByCourseId(Long courseId);
     List<Quiz> findByCourseIdAndPublishedTrue(Long courseId);
+    List<Quiz> findByCourseIdAndPublishedTrueAndStudentIsNull(Long courseId);
+    List<Quiz> findByCourseIdAndStudentIsNull(Long courseId);
     List<Quiz> findByTopicId(Long topicId);
     List<Quiz> findByStudentIdAndType(Long studentId, QuizType type);
     List<Quiz> findByCreatedById(Long createdById);

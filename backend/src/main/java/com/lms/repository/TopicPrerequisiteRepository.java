@@ -12,4 +12,6 @@ public interface TopicPrerequisiteRepository extends JpaRepository<TopicPrerequi
     List<TopicPrerequisite> findByPrerequisiteTopicId(Long prerequisiteTopicId);
     boolean existsByTopicIdAndPrerequisiteTopicId(Long topicId, Long prerequisiteTopicId);
     void deleteByTopicIdAndPrerequisiteTopicId(Long topicId, Long prerequisiteTopicId);
+    List<TopicPrerequisite> findByTopicModuleCourseId(Long courseId);
+    void deleteByTopicIdOrPrerequisiteTopicId(Long topicId, Long prerequisiteTopicId);
 }
