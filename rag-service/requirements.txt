@@ -1,3 +1,9 @@
 fastapi==0.115.6
 uvicorn[standard]==0.34.0
+python-multipart==0.0.32
 anthropic==1.8.0
+pypdf==6.19.0
+faiss-cpu==1.15.1
+numpy==2.5.3
+# pulls in torch; the Dockerfile installs the CPU-only torch wheel first to keep the image small
+sentence-transformers==6.1.0

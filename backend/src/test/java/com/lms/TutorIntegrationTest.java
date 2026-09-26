@@ -20,8 +20,7 @@ class TutorIntegrationTest extends IntegrationTestSupport {
 
     @AfterEach
     void reset() {
-        rag.failWith = null;
-        rag.lastRequest = null;
+        rag.reset();
     }
 
     @Test

@@ -92,3 +92,63 @@ body {
 .system-status .url { color: #7b8794; font-size: 0.85rem; flex: 1; }
 .system-status .extra { color: #52606d; font-size: 0.85rem; }
 .checked-at { color: #7b8794; font-size: 0.8rem; margin-bottom: 0; }
+
+/* ---------------------------------------------------------------- layout */
+.app-main { max-width: 1100px; }
+.header-user { margin-left: auto; display: flex; gap: 1rem; align-items: center; color: #cbd2d9; font-size: 0.9rem; }
+.dashboard { display: flex; flex-direction: column; gap: 1.25rem; }
+.dashboard h1 { margin: 0 0 0.25rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; }
+.row-between { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.muted { color: #7b8794; }
+.small { font-size: 0.85rem; }
+.error { color: #c81e2b; }
+
+/* ---------------------------------------------------------------- cards & stats */
+.card { background: #fff; border: 1px solid #e4e7eb; border-radius: 8px; padding: 1rem 1.25rem; }
+.card-header { display: flex; justify-content: space-between; align-items: center; }
+.card h2 { font-size: 1.05rem; margin: 0 0 0.75rem; }
+.card h3 { font-size: 0.95rem; margin: 1rem 0 0.5rem; }
+.stat-row, .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+.stat-row.compact { grid-template-columns: repeat(3, 1fr); margin-bottom: 0.75rem; }
+.stat-card { background: #fff; border: 1px solid #e4e7eb; border-radius: 8px; padding: 0.9rem 1rem; }
+.stat-label { color: #52606d; font-size: 0.85rem; }
+.stat-value { font-size: 1.6rem; font-weight: 700; margin-top: 0.2rem; }
+.stat-hint { color: #7b8794; font-size: 0.8rem; margin-top: 0.2rem; }
+
+/* ---------------------------------------------------------------- lists, bars, badges */
+.plain-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+.plain-list.numbered { list-style: decimal; padding-left: 1.25rem; }
+.progress { background: #e4e7eb; border-radius: 999px; height: 8px; overflow: hidden; margin: 0.35rem 0; }
+.progress-fill { background: #3ebd93; height: 100%; }
+.badge { display: inline-block; font-size: 0.75rem; padding: 0.1rem 0.5rem; border-radius: 999px; background: #e4e7eb; text-transform: capitalize; }
+.badge.warn { background: #fff3c4; color: #8d6e00; }
+.band-STRONG { background: #c6f7e2; color: #0b6e4f; }
+.band-MODERATE { background: #d9e8ff; color: #1f4f96; }
+.band-NEEDS_PRACTICE { background: #fff3c4; color: #8d6e00; }
+.band-WEAK { background: #ffe3e3; color: #a61b1b; }
+.band-NOT_STARTED { background: #e4e7eb; color: #52606d; }
+.checklist li::before { content: '○'; margin-right: 0.5rem; color: #3ebd93; }
+
+/* ---------------------------------------------------------------- tables & charts */
+.table-wrap { overflow-x: auto; margin-top: 1rem; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid #f0f4f8; }
+th { color: #52606d; font-weight: 600; }
+.chart { width: 100%; min-height: 300px; }
+.chart-sm { width: 100%; min-height: 160px; }
+
+/* ---------------------------------------------------------------- forms & buttons */
+label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.9rem; color: #3e4c59; }
+label.inline { flex-direction: row; align-items: center; gap: 0.5rem; }
+input, select { font: inherit; padding: 0.5rem 0.6rem; border: 1px solid #cbd2d9; border-radius: 6px; }
+button { font: inherit; cursor: pointer; }
+button.primary, a.button.primary { background: #1f2933; color: #fff; border: none; border-radius: 6px; padding: 0.55rem 1rem; text-decoration: none; display: inline-block; }
+button.primary:disabled { opacity: 0.5; cursor: default; }
+button.link { background: none; border: none; color: #1f4f96; padding: 0; }
+button.link.light { color: #cbd2d9; }
+.auth-page { display: flex; justify-content: center; padding-top: 2rem; }
+.auth-card { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 0.9rem; }
+.auth-card h1 { margin: 0; font-size: 1.4rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.upload-form { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem; }

@@ -84,7 +84,9 @@ public class AiTutorService {
         }
         long latencyMs = elapsedMs(started);
         AiInteraction saved = log(user, scope, request.message(), reply, latencyMs);
-        return new TutorChatResponse(saved.getId(), reply.reply(), reply.model(), reply.refused(), latencyMs);
+        return new TutorChatResponse(saved.getId(), reply.reply(), reply.model(), reply.refused(), latencyMs,
+                reply.grounded(), reply.notInMaterial(), reply.sources() == null ? List.of()
+                        : reply.sources().stream().map(TutorChatResponse.Source::from).toList());
     }
 
     /** The caller's most recent tutor exchanges, newest first. */
@@ -139,7 +141,7 @@ public class AiTutorService {
                     .map(AiTutorService::level)
                     .toList();
         }
-        return new StudentContext(me.getFirstName(),
+        return new StudentContext(scope.courseId(), me.getFirstName(),
                 course == null ? null : course.getTitle(), course == null ? null : course.getDescription(),
                 topic == null ? null : topic.getTitle(), topic == null ? null : topic.getDescription(),
                 topicKnowledge, weakTopics);
@@ -162,7 +164,7 @@ public class AiTutorService {
             i.setLatencyMs(latencyMs);
             if (reply != null) {
                 i.setResponse(reply.reply());
-                i.setModelName(reply.model());
+                i.setModelName(reply.model() != null ? reply.model() : reply.notInMaterial() ? "none:not-in-material" : null);
                 i.setInputTokens(reply.inputTokens());
                 i.setOutputTokens(reply.outputTokens());
             }

@@ -1,7 +1,8 @@
-"""Phase 10 - AI tutor (no retrieval yet): a single Claude call per turn, grounded in the student's
-course/topic and knowledge level supplied by the backend."""
+"""AI tutor: one Claude call per turn with the student's course/topic and knowledge level (Phase 10).
+When the course has uploaded material, the answer is grounded in retrieved chunks (Phase 11)."""
 import logging
 from functools import lru_cache
+from html import escape
 from typing import Literal, Optional
 
 import anthropic
@@ -9,12 +10,17 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from . import config
+from .retrieval import Retriever, get_retriever
+from .vector_store import Hit
 
 log = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/tutor", tags=["tutor"])
 
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
+
+NOT_IN_MATERIAL = ("I couldn't find this in the course material for this course, so I won't guess. "
+                   "Try rephrasing the question, or ask your instructor whether it's covered.")
 
 SYSTEM_PROMPT = """You are a patient, encouraging tutor inside a learning management system.
 
@@ -39,6 +45,7 @@ class KnowledgeLevel(BaseModel):
 
 
 class StudentContext(BaseModel):
+    course_id: Optional[int] = None  # enables retrieval over that course's uploaded material
     student_name: Optional[str] = None
     course_title: Optional[str] = None
     course_description: Optional[str] = None
@@ -59,13 +66,25 @@ class ChatRequest(BaseModel):
     context: StudentContext = Field(default_factory=StudentContext)
 
 
+class SourceRef(BaseModel):
+    ref: int  # the [n] number used in the reply
+    document_id: int
+    title: str
+    chunk_index: int
+    page_number: int
+    score: float
+
+
 class ChatResponse(BaseModel):
     reply: str
-    model: str
+    model: Optional[str]  # None when no LLM call was made
     stop_reason: Optional[str]
     refused: bool
     input_tokens: int
     output_tokens: int
+    grounded: bool = False          # the course has indexed material and retrieval was used
+    not_in_material: bool = False   # retrieval found nothing relevant, so no answer was generated
+    sources: list[SourceRef] = Field(default_factory=list)
 
 
 @lru_cache(maxsize=1)
@@ -110,15 +129,48 @@ def build_messages(request: ChatRequest) -> list[dict]:
     ]
 
 
+def render_material(hits: list[Hit]) -> str:
+    """Retrieved chunks as numbered sources, plus the grounding rules."""
+    sources = "\n".join(
+        f'<source id="{i}" document="{escape(h.record.title)}" page="{h.record.page_number}">\n'
+        f"{h.record.text}\n</source>"
+        for i, h in enumerate(hits, start=1))
+    return (f"<course_material>\n{sources}\n</course_material>\n\n"
+            "Answer from the course material above. Cite the sources you use like [1] or [2]. "
+            "If the material does not cover what the student asked, say that it is not covered in the "
+            "course material instead of answering from general knowledge.")
+
+
+def source_refs(hits: list[Hit]) -> list[SourceRef]:
+    return [SourceRef(ref=i, document_id=h.record.document_id, title=h.record.title,
+                      chunk_index=h.record.chunk_index, page_number=h.record.page_number, score=round(h.score, 4))
+            for i, h in enumerate(hits, start=1)]
+
+
 @router.post("/chat", response_model=ChatResponse)
-def chat(request: ChatRequest, client: anthropic.Anthropic = Depends(get_client)) -> ChatResponse:
+def chat(request: ChatRequest, client: anthropic.Anthropic = Depends(get_client),
+         retriever: Retriever = Depends(get_retriever)) -> ChatResponse:
+    system = [
+        {"type": "text", "text": SYSTEM_PROMPT},
+        {"type": "text", "text": render_context(request.context)},
+    ]
+    hits: list[Hit] = []
+    grounded = False
+    if request.context.course_id is not None:
+        retrieval = retriever.retrieve(request.context.course_id, request.message)
+        if retrieval.indexed:
+            grounded = True
+            if not retrieval.hits:
+                # nothing similar enough: say so explicitly rather than let the model guess
+                return ChatResponse(reply=NOT_IN_MATERIAL, model=None, stop_reason=None, refused=False,
+                                    input_tokens=0, output_tokens=0, grounded=True, not_in_material=True)
+            hits = retrieval.hits
+            system.append({"type": "text", "text": render_material(hits)})
+
     params = dict(
         model=config.LLM_MODEL,
         max_tokens=config.LLM_MAX_TOKENS,
-        system=[
-            {"type": "text", "text": SYSTEM_PROMPT},
-            {"type": "text", "text": render_context(request.context)},
-        ],
+        system=system,
         messages=build_messages(request),
         output_config={"effort": config.LLM_EFFORT},
     )
@@ -157,4 +209,7 @@ def chat(request: ChatRequest, client: anthropic.Anthropic = Depends(get_client)
         refused=refused,
         input_tokens=response.usage.input_tokens,
         output_tokens=response.usage.output_tokens,
+        grounded=grounded,
+        not_in_material=False,
+        sources=source_refs(hits),
     )

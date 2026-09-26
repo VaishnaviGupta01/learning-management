@@ -18,4 +18,7 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 
     @Query("select coalesce(sum(s.durationMinutes), 0) from StudySession s where s.student.id = :studentId and s.course.id = :courseId")
     long totalMinutesByStudentAndCourse(@Param("studentId") Long studentId, @Param("courseId") Long courseId);
+
+    @Query("select count(distinct s.student.id) from StudySession s where s.startedAt >= :after")
+    long countActiveStudentsSince(@Param("after") Instant after);
 }

@@ -42,6 +42,31 @@ public interface QuestionAttemptRepository extends JpaRepository<QuestionAttempt
             group by q.topic.id""")
     List<TopicStatsView.Accuracy> accuracyByTopic(@Param("studentId") Long studentId, @Param("courseId") Long courseId);
 
+    /** Per topic of a course, across all students: answers given (total) and correct answers. */
+    @Query("""
+            select q.topic.id as topicId, count(qa) as total,
+                   sum(case when qa.correct = true then 1 else 0 end) as correct
+            from QuestionAttempt qa join qa.question q
+            where q.topic.module.course.id = :courseId
+            group by q.topic.id""")
+    List<TopicStatsView.Accuracy> courseAccuracyByTopic(@Param("courseId") Long courseId);
+
+    /** Per topic of a course: number of distinct students who answered at least one question. */
+    @Query("""
+            select q.topic.id as topicId, count(distinct qa.quizAttempt.student.id) as total
+            from QuestionAttempt qa join qa.question q
+            where q.topic.module.course.id = :courseId
+            group by q.topic.id""")
+    List<TopicStatsView.Count> studentsByTopic(@Param("courseId") Long courseId);
+
+    /** Every submitted answer on a course's questions, with attempt, quiz and question loaded (oldest first). */
+    @Query("""
+            select qa from QuestionAttempt qa
+              join fetch qa.quizAttempt a join fetch a.quiz qz join fetch qa.question q
+            where q.topic.module.course.id = :courseId and a.submittedAt is not null
+            order by a.submittedAt asc, qa.id asc""")
+    List<QuestionAttempt> findSubmittedByCourse(@Param("courseId") Long courseId);
+
     /** Submitted answers on the given topics, newest first, with attempt, quiz and question loaded. */
     @Query("""
             select qa from QuestionAttempt qa

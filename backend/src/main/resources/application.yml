@@ -30,6 +30,8 @@ app:
   admin:
     email: ${ADMIN_EMAIL:}
     password: ${ADMIN_PASSWORD:}
+  demo:
+    enabled: ${SEED_DEMO_DATA:false}   # 3 courses, 108 questions, 15 simulated students (runs once)
   services:
     ml-url: ${ML_SERVICE_URL:http://localhost:8001}
     rag-url: ${RAG_SERVICE_URL:http://localhost:8002}

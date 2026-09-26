@@ -15,5 +15,6 @@ public interface StudentTopicKnowledgeRepository extends JpaRepository<StudentTo
     List<StudentTopicKnowledge> findByStudentIdAndClassification(Long studentId, TopicClassification classification);
     List<StudentTopicKnowledge> findByStudentIdAndTopicModuleCourseId(Long studentId, Long courseId);
     List<StudentTopicKnowledge> findByTopicId(Long topicId);
+    List<StudentTopicKnowledge> findByTopicModuleCourseId(Long courseId);
     List<StudentTopicKnowledge> findByTopicModuleCourseIdAndClassification(Long courseId, TopicClassification classification);
 }

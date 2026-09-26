@@ -19,6 +19,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByStatus(QuestionStatus status);
     List<Question> findByStatusAndCreatedByType(QuestionStatus status, CreatedByType createdByType);
     long countByTopicIdAndStatus(Long topicId, QuestionStatus status);
+    long countByStatus(QuestionStatus status);
+    long countByTopicModuleCourseIdAndStatus(Long courseId, QuestionStatus status);
 
     @Query("select q from Question q where q.topic.module.course.id = :courseId and q.status = :status")
     List<Question> findByCourseIdAndStatus(@Param("courseId") Long courseId, @Param("status") QuestionStatus status);

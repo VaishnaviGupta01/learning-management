@@ -1,0 +1,185 @@
+[
+  {
+    "code": "DSA101",
+    "title": "Data Structures & Algorithms",
+    "description": "Core data structures, recursion and graph algorithms with complexity analysis.",
+    "instructor": "instructor1",
+    "modules": [
+      {"title": "Linear structures", "topics": [
+        {"title": "Arrays", "difficulty": "EASY", "importance": 0.8, "questions": [
+          {"d": "EASY", "q": "What is the time complexity of reading arr[i] in an array?", "o": ["O(1)", "O(log n)", "O(n)", "O(n log n)"], "a": 0, "e": "Elements are contiguous, so the address is computed directly from the index."},
+          {"d": "EASY", "q": "Which index holds the first element of an array in most languages?", "o": ["0", "1", "-1", "It depends on the element type"], "a": 0, "e": "Arrays are zero-indexed in C, Java, Python and JavaScript."},
+          {"d": "MEDIUM", "q": "Inserting an element at the front of an array of n elements costs:", "o": ["O(n)", "O(1)", "O(log n)", "O(n^2)"], "a": 0, "e": "Every existing element has to shift one position."},
+          {"d": "MEDIUM", "q": "Why is appending to a dynamic array O(1) amortized?", "o": ["Capacity doubles, so costly resizes are rare", "The array never needs to resize", "Elements are stored in a linked list", "Appending uses binary search"], "a": 0, "e": "Doubling makes the total copy cost over n appends O(n)."},
+          {"d": "HARD", "q": "Why is scanning an array usually faster in practice than scanning a linked list of the same length?", "o": ["Better cache locality from contiguous memory", "Arrays use fewer comparisons", "Linked lists are always O(n^2)", "Arrays are sorted automatically"], "a": 0, "e": "Neighbouring elements share cache lines; list nodes are scattered in memory."},
+          {"d": "HARD", "q": "With two pointers moving inward, finding a pair with a given sum in a sorted array takes:", "o": ["O(n)", "O(n^2)", "O(log n)", "O(n log n)"], "a": 0, "e": "Each step discards one element, so at most n steps are needed."}
+        ]},
+        {"title": "Linked Lists", "difficulty": "MEDIUM", "importance": 0.6, "questions": [
+          {"d": "EASY", "q": "What does each node of a singly linked list store?", "o": ["A value and a pointer to the next node", "A value and its index", "Only a value", "Pointers to all other nodes"], "a": 0, "e": "Nodes are chained through next pointers."},
+          {"d": "EASY", "q": "Accessing the k-th element of a linked list costs:", "o": ["O(k)", "O(1)", "O(log k)", "O(k^2)"], "a": 0, "e": "You must walk k nodes from the head."},
+          {"d": "MEDIUM", "q": "What does a doubly linked list add compared with a singly linked list?", "o": ["A pointer to the previous node", "Automatic sorting", "Random access in O(1)", "A second value per node"], "a": 0, "e": "The prev pointer allows backwards traversal and O(1) removal given the node."},
+          {"d": "MEDIUM", "q": "Removing a node when you already hold a reference to its predecessor costs:", "o": ["O(1)", "O(n)", "O(log n)", "O(n^2)"], "a": 0, "e": "Only the predecessor's next pointer changes."},
+          {"d": "HARD", "q": "Floyd's fast/slow pointer technique is used to:", "o": ["Detect a cycle in a linked list", "Sort a linked list", "Reverse a linked list", "Merge two lists"], "a": 0, "e": "If the fast pointer ever meets the slow one, the list has a cycle."},
+          {"d": "HARD", "q": "Reversing a singly linked list in place needs how much extra memory?", "o": ["O(1)", "O(n)", "O(log n)", "O(n^2)"], "a": 0, "e": "Three pointers (prev, current, next) are enough."}
+        ]},
+        {"title": "Stacks & Queues", "difficulty": "EASY", "importance": 0.5, "questions": [
+          {"d": "EASY", "q": "A stack removes elements in which order?", "o": ["Last in, first out", "First in, first out", "Smallest first", "Random order"], "a": 0, "e": "Stacks are LIFO: pop returns the most recent push."},
+          {"d": "EASY", "q": "A queue removes elements in which order?", "o": ["First in, first out", "Last in, first out", "Largest first", "Alphabetical"], "a": 0, "e": "Queues are FIFO."},
+          {"d": "MEDIUM", "q": "Which structure does a program use to track active function calls?", "o": ["A stack", "A queue", "A heap", "A hash table"], "a": 0, "e": "Each call pushes a frame onto the call stack."},
+          {"d": "MEDIUM", "q": "Breadth-first search uses which structure to decide the next node?", "o": ["A queue", "A stack", "A priority queue", "A set"], "a": 0, "e": "FIFO order visits nodes by distance from the start."},
+          {"d": "HARD", "q": "How can a queue be built from two stacks with O(1) amortized operations?", "o": ["Push to an inbox stack; pop from an outbox stack, refilling it only when empty", "Push to both stacks every time", "Sort both stacks after each push", "Alternate stacks on every operation"], "a": 0, "e": "Each element moves between stacks at most once."},
+          {"d": "HARD", "q": "Checking balanced parentheses in a string of length n with a stack takes:", "o": ["O(n) time", "O(n^2) time", "O(log n) time", "O(1) time"], "a": 0, "e": "Each character is pushed or popped at most once."}
+        ]}
+      ]},
+      {"title": "Recursive structures", "topics": [
+        {"title": "Recursion", "difficulty": "MEDIUM", "importance": 0.9, "questions": [
+          {"d": "EASY", "q": "What must every recursive function have to terminate?", "o": ["A base case", "A loop", "A global variable", "Two parameters"], "a": 0, "e": "The base case is answered without recursing."},
+          {"d": "EASY", "q": "What happens if recursion never reaches a base case?", "o": ["Stack overflow", "The result is 0", "The compiler fixes it", "It runs in O(1)"], "a": 0, "e": "Frames keep accumulating until the stack runs out."},
+          {"d": "MEDIUM", "q": "What is factorial(0) by definition?", "o": ["1", "0", "Undefined", "-1"], "a": 0, "e": "0! = 1 is the base case of factorial."},
+          {"d": "MEDIUM", "q": "Naive recursive Fibonacci runs in roughly:", "o": ["Exponential time", "Linear time", "Logarithmic time", "Constant time"], "a": 0, "e": "It recomputes the same subproblems many times."},
+          {"d": "HARD", "q": "Memoizing recursive Fibonacci reduces its running time to:", "o": ["O(n)", "O(2^n)", "O(n^2)", "O(log n)"], "a": 0, "e": "Each value is computed once and then reused."},
+          {"d": "HARD", "q": "Recursive binary search on n elements uses how much stack space?", "o": ["O(log n)", "O(n)", "O(1)", "O(n log n)"], "a": 0, "e": "Recursion depth equals the number of halvings."}
+        ]},
+        {"title": "Binary Search Trees", "difficulty": "MEDIUM", "importance": 0.8, "questions": [
+          {"d": "EASY", "q": "In a BST, keys in a node's left subtree are:", "o": ["Smaller than the node", "Larger than the node", "Equal to the node", "In random order"], "a": 0, "e": "That ordering invariant is what makes search efficient."},
+          {"d": "EASY", "q": "Which traversal visits the keys of a BST in sorted order?", "o": ["In-order", "Pre-order", "Post-order", "Level-order"], "a": 0, "e": "Left subtree, node, right subtree."},
+          {"d": "MEDIUM", "q": "Searching a balanced BST with n keys takes:", "o": ["O(log n)", "O(n)", "O(1)", "O(n log n)"], "a": 0, "e": "Each comparison halves the remaining tree."},
+          {"d": "MEDIUM", "q": "Inserting keys 1, 2, 3, ..., n into an unbalanced BST produces:", "o": ["A tree shaped like a linked list", "A perfectly balanced tree", "A heap", "An empty tree"], "a": 0, "e": "Every key goes to the right, so height is n - 1."},
+          {"d": "HARD", "q": "AVL and red-black trees keep operations O(log n) by:", "o": ["Rotating nodes to keep the height logarithmic", "Sorting the tree after every insert", "Storing keys in an array", "Limiting the tree to 1000 nodes"], "a": 0, "e": "Rotations restore balance after inserts and deletes."},
+          {"d": "HARD", "q": "Deleting a BST node with two children replaces it with:", "o": ["Its in-order successor (or predecessor)", "Its left child always", "The root", "A null pointer"], "a": 0, "e": "The successor keeps the ordering invariant intact."}
+        ]},
+        {"title": "Graphs", "difficulty": "HARD", "importance": 0.7, "questions": [
+          {"d": "EASY", "q": "An adjacency list stores:", "o": ["For each vertex, its neighbours", "A V x V matrix of booleans", "Only the edge weights", "Vertices in sorted order"], "a": 0, "e": "It uses O(V + E) memory."},
+          {"d": "EASY", "q": "A graph with no cycles and directed edges is called a:", "o": ["DAG", "Complete graph", "Bipartite graph", "Clique"], "a": 0, "e": "Directed acyclic graph."},
+          {"d": "MEDIUM", "q": "Which algorithm finds shortest paths in an unweighted graph?", "o": ["Breadth-first search", "Depth-first search", "Bubble sort", "Binary search"], "a": 0, "e": "BFS explores vertices in order of distance."},
+          {"d": "MEDIUM", "q": "A topological order exists only for graphs that are:", "o": ["Directed and acyclic", "Undirected", "Complete", "Weighted"], "a": 0, "e": "A cycle means no vertex can come first."},
+          {"d": "HARD", "q": "BFS on a graph stored as adjacency lists runs in:", "o": ["O(V + E)", "O(V^2)", "O(E log V)", "O(V * E)"], "a": 0, "e": "Each vertex and edge is processed once."},
+          {"d": "HARD", "q": "Dijkstra's algorithm is not correct when the graph has:", "o": ["Negative edge weights", "More than 100 vertices", "Cycles", "Undirected edges"], "a": 0, "e": "It assumes a settled distance never decreases."}
+        ]}
+      ]}
+    ],
+    "prerequisites": [["Linked Lists", "Arrays"], ["Stacks & Queues", "Linked Lists"], ["Binary Search Trees", "Recursion"], ["Graphs", "Binary Search Trees"], ["Graphs", "Stacks & Queues"]]
+  },
+  {
+    "code": "PY101",
+    "title": "Python Programming",
+    "description": "From variables to classes: writing clear, correct Python.",
+    "instructor": "instructor1",
+    "modules": [
+      {"title": "Basics", "topics": [
+        {"title": "Variables & Types", "difficulty": "EASY", "importance": 0.6, "questions": [
+          {"d": "EASY", "q": "What is the type of 3.0 in Python?", "o": ["float", "int", "str", "decimal"], "a": 0, "e": "A literal with a decimal point is a float."},
+          {"d": "EASY", "q": "Which value is falsy in Python?", "o": ["0", "\"0\"", "[0]", "\"False\""], "a": 0, "e": "Zero is falsy; non-empty strings and lists are truthy."},
+          {"d": "MEDIUM", "q": "What does 7 // 2 evaluate to?", "o": ["3", "3.5", "4", "2"], "a": 0, "e": "// is floor division."},
+          {"d": "MEDIUM", "q": "Strings in Python are:", "o": ["Immutable", "Mutable", "Mutable only if short", "Stored as lists"], "a": 0, "e": "Operations return new strings; the original never changes."},
+          {"d": "HARD", "q": "What does 0.1 + 0.2 == 0.3 evaluate to?", "o": ["False", "True", "It raises an error", "None"], "a": 0, "e": "Binary floating point cannot represent these values exactly."},
+          {"d": "HARD", "q": "After a = [1]; b = a; b.append(2), what is a?", "o": ["[1, 2]", "[1]", "[2]", "An error"], "a": 0, "e": "a and b name the same list object."}
+        ]},
+        {"title": "Control Flow", "difficulty": "EASY", "importance": 0.7, "questions": [
+          {"d": "EASY", "q": "Which keyword starts an alternative branch after if?", "o": ["elif", "elseif", "else if", "case"], "a": 0, "e": "Python uses elif."},
+          {"d": "EASY", "q": "range(3) produces:", "o": ["0, 1, 2", "1, 2, 3", "0, 1, 2, 3", "3"], "a": 0, "e": "The stop value is excluded."},
+          {"d": "MEDIUM", "q": "What does break do inside a loop?", "o": ["Exits the innermost loop", "Skips to the next iteration", "Exits the program", "Restarts the loop"], "a": 0, "e": "continue skips; break exits."},
+          {"d": "MEDIUM", "q": "When does a loop's else clause run?", "o": ["When the loop finishes without break", "Always", "Only on an exception", "When the loop body never runs, only"], "a": 0, "e": "break skips the else block."},
+          {"d": "HARD", "q": "What does [x * x for x in range(4) if x % 2 == 0] produce?", "o": ["[0, 4]", "[0, 1, 4, 9]", "[4]", "[1, 9]"], "a": 0, "e": "Only 0 and 2 pass the filter."},
+          {"d": "HARD", "q": "What does 'a' if 0 else 'b' evaluate to?", "o": ["'b'", "'a'", "0", "None"], "a": 0, "e": "0 is falsy, so the else value is chosen."}
+        ]},
+        {"title": "Functions", "difficulty": "MEDIUM", "importance": 0.9, "questions": [
+          {"d": "EASY", "q": "Which keyword defines a function?", "o": ["def", "function", "fun", "lambda only"], "a": 0, "e": "def name(params): starts a function."},
+          {"d": "EASY", "q": "What does a function return if it has no return statement?", "o": ["None", "0", "An empty string", "It raises an error"], "a": 0, "e": "The implicit return value is None."},
+          {"d": "MEDIUM", "q": "What does *args collect?", "o": ["Extra positional arguments as a tuple", "Keyword arguments as a dict", "Only the first argument", "Default values"], "a": 0, "e": "**kwargs collects keyword arguments."},
+          {"d": "MEDIUM", "q": "A variable assigned inside a function without 'global' is:", "o": ["Local to the function", "Global", "Shared by all functions", "Read-only"], "a": 0, "e": "Assignment creates a local name."},
+          {"d": "HARD", "q": "Why is def f(items=[]) a common bug?", "o": ["The default list is created once and shared between calls", "Lists cannot be defaults", "It makes f recursive", "It is slower"], "a": 0, "e": "Defaults are evaluated once at definition time; use None instead."},
+          {"d": "HARD", "q": "A closure is a function that:", "o": ["Remembers variables from the scope where it was defined", "Cannot take arguments", "Is always anonymous", "Runs only once"], "a": 0, "e": "Inner functions capture enclosing variables."}
+        ]}
+      ]},
+      {"title": "Building programs", "topics": [
+        {"title": "Collections", "difficulty": "MEDIUM", "importance": 0.8, "questions": [
+          {"d": "EASY", "q": "Which collection maps keys to values?", "o": ["dict", "list", "tuple", "set"], "a": 0, "e": "Dictionaries store key-value pairs."},
+          {"d": "EASY", "q": "Which collection automatically removes duplicates?", "o": ["set", "list", "tuple", "str"], "a": 0, "e": "Sets hold unique elements."},
+          {"d": "MEDIUM", "q": "Checking 'x in my_set' takes on average:", "o": ["O(1)", "O(n)", "O(log n)", "O(n^2)"], "a": 0, "e": "Sets are hash tables."},
+          {"d": "MEDIUM", "q": "Which of these can be a dictionary key?", "o": ["A tuple of numbers", "A list", "A dict", "A set"], "a": 0, "e": "Keys must be hashable (immutable)."},
+          {"d": "HARD", "q": "What does d.get('k', 0) return when 'k' is missing?", "o": ["0", "None", "It raises KeyError", "'k'"], "a": 0, "e": "get returns the default instead of raising."},
+          {"d": "HARD", "q": "Since Python 3.7, iterating over a dict yields keys in:", "o": ["Insertion order", "Sorted order", "Random order", "Reverse insertion order"], "a": 0, "e": "Dicts preserve insertion order."}
+        ]},
+        {"title": "Object-Oriented Python", "difficulty": "HARD", "importance": 0.6, "questions": [
+          {"d": "EASY", "q": "Which method initialises a new object?", "o": ["__init__", "__new_object__", "constructor", "__start__"], "a": 0, "e": "__init__ runs after the object is created."},
+          {"d": "EASY", "q": "What does 'self' refer to inside a method?", "o": ["The instance the method was called on", "The class", "The module", "The parent class"], "a": 0, "e": "It is passed automatically as the first argument."},
+          {"d": "MEDIUM", "q": "class Dog(Animal): means:", "o": ["Dog inherits from Animal", "Animal inherits from Dog", "Dog contains an Animal", "Dog and Animal are unrelated"], "a": 0, "e": "The parent class goes in parentheses."},
+          {"d": "MEDIUM", "q": "What does super().__init__() do in a subclass?", "o": ["Runs the parent class initialiser", "Creates a new parent object", "Deletes the parent", "Calls the method twice"], "a": 0, "e": "It lets the parent set up its part of the object."},
+          {"d": "HARD", "q": "Which method controls what str(obj) returns?", "o": ["__str__", "__repr__ only", "__print__", "__format_str__"], "a": 0, "e": "str() uses __str__ (falling back to __repr__)."},
+          {"d": "HARD", "q": "A @property lets you:", "o": ["Access a method like an attribute", "Make a class abstract", "Share state between classes", "Speed up loops"], "a": 0, "e": "obj.value calls the getter without parentheses."}
+        ]},
+        {"title": "Error Handling", "difficulty": "MEDIUM", "importance": 0.5, "questions": [
+          {"d": "EASY", "q": "Which block catches exceptions?", "o": ["except", "catch", "rescue", "error"], "a": 0, "e": "Python uses try/except."},
+          {"d": "EASY", "q": "Which exception does int('abc') raise?", "o": ["ValueError", "TypeError", "KeyError", "IndexError"], "a": 0, "e": "The type is right but the value cannot be converted."},
+          {"d": "MEDIUM", "q": "When does a finally block run?", "o": ["Always, whether or not an exception occurred", "Only when there is no exception", "Only after an exception", "Never if there is a return"], "a": 0, "e": "It is for clean-up that must always happen."},
+          {"d": "MEDIUM", "q": "Which statement raises an exception deliberately?", "o": ["raise", "throw", "error", "fail"], "a": 0, "e": "raise ValueError('message')."},
+          {"d": "HARD", "q": "Why is a bare 'except:' discouraged?", "o": ["It also catches KeyboardInterrupt and SystemExit and hides bugs", "It is a syntax error", "It is slower than try", "It only catches one exception"], "a": 0, "e": "Catch the specific exceptions you expect."},
+          {"d": "HARD", "q": "What does a 'with open(...) as f' block guarantee?", "o": ["The file is closed even if an exception occurs", "The file is read-only", "The file is locked", "The file is deleted afterwards"], "a": 0, "e": "Context managers run their exit logic unconditionally."}
+        ]}
+      ]}
+    ],
+    "prerequisites": [["Control Flow", "Variables & Types"], ["Functions", "Control Flow"], ["Collections", "Control Flow"], ["Object-Oriented Python", "Functions"], ["Object-Oriented Python", "Collections"], ["Error Handling", "Functions"]]
+  },
+  {
+    "code": "DB101",
+    "title": "Databases & SQL",
+    "description": "Relational modelling, SQL queries and how databases stay consistent and fast.",
+    "instructor": "instructor2",
+    "modules": [
+      {"title": "Querying", "topics": [
+        {"title": "Relational Model", "difficulty": "EASY", "importance": 0.6, "questions": [
+          {"d": "EASY", "q": "In a relational database, a table row is also called a:", "o": ["Tuple (record)", "Column", "Schema", "Index"], "a": 0, "e": "Rows are records; columns are attributes."},
+          {"d": "EASY", "q": "A primary key must be:", "o": ["Unique and not null", "A number", "The first column", "Indexed manually"], "a": 0, "e": "It identifies each row."},
+          {"d": "MEDIUM", "q": "A foreign key:", "o": ["References a key in another table", "Is always a string", "Must be unique", "Encrypts a column"], "a": 0, "e": "It links rows across tables and enforces referential integrity."},
+          {"d": "MEDIUM", "q": "A many-to-many relationship is usually modelled with:", "o": ["A join table holding two foreign keys", "One table with repeated columns", "Two primary keys in each table", "A view"], "a": 0, "e": "For example enrolments(student_id, course_id)."},
+          {"d": "HARD", "q": "A composite key is:", "o": ["A primary key made of several columns", "A key stored in two tables", "An encrypted key", "A key with a default value"], "a": 0, "e": "The combination must be unique."},
+          {"d": "HARD", "q": "ON DELETE CASCADE on a foreign key means:", "o": ["Deleting the parent row also deletes referencing rows", "The parent can never be deleted", "Child rows become NULL", "The delete is logged only"], "a": 0, "e": "Dependent rows are removed automatically."}
+        ]},
+        {"title": "SELECT Queries", "difficulty": "EASY", "importance": 0.9, "questions": [
+          {"d": "EASY", "q": "Which clause filters rows?", "o": ["WHERE", "ORDER BY", "SELECT", "FROM"], "a": 0, "e": "WHERE keeps rows that satisfy a condition."},
+          {"d": "EASY", "q": "Which clause sorts the result?", "o": ["ORDER BY", "SORT", "GROUP BY", "ARRANGE"], "a": 0, "e": "ORDER BY col ASC|DESC."},
+          {"d": "MEDIUM", "q": "How do you find rows where email is missing?", "o": ["WHERE email IS NULL", "WHERE email = NULL", "WHERE email == ''", "WHERE NOT email"], "a": 0, "e": "NULL is never equal to anything, even NULL."},
+          {"d": "MEDIUM", "q": "SELECT DISTINCT city FROM users returns:", "o": ["Each city once", "Only the first city", "Cities sorted", "The number of cities"], "a": 0, "e": "DISTINCT removes duplicate rows."},
+          {"d": "HARD", "q": "WHERE name LIKE 'A%' matches names that:", "o": ["Start with A", "End with A", "Contain only A", "Are exactly 'A%'"], "a": 0, "e": "% matches any sequence of characters."},
+          {"d": "HARD", "q": "In which order does SQL logically evaluate these clauses?", "o": ["FROM, WHERE, SELECT, ORDER BY", "SELECT, FROM, WHERE, ORDER BY", "ORDER BY, SELECT, FROM, WHERE", "WHERE, FROM, ORDER BY, SELECT"], "a": 0, "e": "That is why a SELECT alias cannot be used in WHERE."}
+        ]},
+        {"title": "Joins", "difficulty": "MEDIUM", "importance": 0.8, "questions": [
+          {"d": "EASY", "q": "An INNER JOIN returns:", "o": ["Only rows with a match in both tables", "All rows from both tables", "Only unmatched rows", "The left table only"], "a": 0, "e": "Non-matching rows are dropped."},
+          {"d": "EASY", "q": "A LEFT JOIN keeps:", "o": ["All rows of the left table", "All rows of the right table", "Only matched rows", "No rows"], "a": 0, "e": "Unmatched right-side columns become NULL."},
+          {"d": "MEDIUM", "q": "How do you find customers with no orders?", "o": ["LEFT JOIN orders and keep rows where the order id IS NULL", "INNER JOIN orders", "CROSS JOIN orders", "RIGHT JOIN customers"], "a": 0, "e": "The anti-join pattern."},
+          {"d": "MEDIUM", "q": "A CROSS JOIN of tables with 3 and 4 rows returns:", "o": ["12 rows", "7 rows", "4 rows", "3 rows"], "a": 0, "e": "Every combination: the Cartesian product."},
+          {"d": "HARD", "q": "A self join is used to:", "o": ["Relate rows of a table to other rows of the same table", "Join a table to a view", "Copy a table", "Speed up queries"], "a": 0, "e": "For example employees and their managers."},
+          {"d": "HARD", "q": "Putting a condition on the right table in WHERE instead of ON in a LEFT JOIN:", "o": ["Turns it into an inner join by dropping the NULL rows", "Has no effect", "Is a syntax error", "Makes it a cross join"], "a": 0, "e": "Filter in ON to keep unmatched left rows."}
+        ]}
+      ]},
+      {"title": "Design & reliability", "topics": [
+        {"title": "Aggregation", "difficulty": "MEDIUM", "importance": 0.7, "questions": [
+          {"d": "EASY", "q": "Which function counts rows?", "o": ["COUNT(*)", "SUM(*)", "TOTAL()", "ROWS()"], "a": 0, "e": "COUNT(*) counts every row."},
+          {"d": "EASY", "q": "GROUP BY is used to:", "o": ["Compute aggregates per group of rows", "Sort rows", "Remove columns", "Join tables"], "a": 0, "e": "One output row per group."},
+          {"d": "MEDIUM", "q": "Which clause filters groups after aggregation?", "o": ["HAVING", "WHERE", "FILTER BY", "LIMIT"], "a": 0, "e": "WHERE runs before grouping; HAVING after."},
+          {"d": "MEDIUM", "q": "COUNT(column) differs from COUNT(*) because it:", "o": ["Ignores NULL values", "Counts duplicates twice", "Only counts numbers", "Is faster"], "a": 0, "e": "COUNT(*) counts rows regardless of NULLs."},
+          {"d": "HARD", "q": "SELECT dept, name, COUNT(*) FROM emp GROUP BY dept fails in strict SQL because:", "o": ["name is neither grouped nor aggregated", "COUNT needs a column", "dept must be last", "GROUP BY needs ORDER BY"], "a": 0, "e": "Each output column must be a group key or an aggregate."},
+          {"d": "HARD", "q": "AVG(score) over the values 10, NULL and 20 returns:", "o": ["15", "10", "30", "NULL"], "a": 0, "e": "NULLs are skipped by aggregate functions."}
+        ]},
+        {"title": "Normalization", "difficulty": "HARD", "importance": 0.5, "questions": [
+          {"d": "EASY", "q": "The main goal of normalization is to:", "o": ["Reduce redundant data", "Make queries shorter", "Encrypt data", "Remove primary keys"], "a": 0, "e": "Less duplication means fewer update anomalies."},
+          {"d": "EASY", "q": "First normal form requires that each column holds:", "o": ["Atomic (single) values", "Unique values", "Numbers only", "Foreign keys"], "a": 0, "e": "No lists or repeating groups in a cell."},
+          {"d": "MEDIUM", "q": "A table in 2NF must also have no:", "o": ["Partial dependency on part of a composite key", "NULL values", "Foreign keys", "Indexes"], "a": 0, "e": "Every non-key column depends on the whole key."},
+          {"d": "MEDIUM", "q": "Storing a customer's address on every order row risks:", "o": ["Update anomalies when the address changes", "Faster joins", "Smaller tables", "Stronger consistency"], "a": 0, "e": "Some copies may be updated and others missed."},
+          {"d": "HARD", "q": "3NF removes which kind of dependency?", "o": ["Transitive dependencies between non-key columns", "All foreign keys", "Composite keys", "Dependencies on the primary key"], "a": 0, "e": "Non-key columns must depend only on the key."},
+          {"d": "HARD", "q": "Deliberate denormalization is usually done to:", "o": ["Speed up read-heavy queries", "Save disk space", "Enforce constraints", "Simplify updates"], "a": 0, "e": "It trades write complexity for fewer joins."}
+        ]},
+        {"title": "Transactions & Indexes", "difficulty": "HARD", "importance": 0.7, "questions": [
+          {"d": "EASY", "q": "What does the A in ACID stand for?", "o": ["Atomicity", "Availability", "Accuracy", "Aggregation"], "a": 0, "e": "All of a transaction happens, or none of it does."},
+          {"d": "EASY", "q": "Which statement undoes an uncommitted transaction?", "o": ["ROLLBACK", "UNDO", "REVERT", "CANCEL"], "a": 0, "e": "COMMIT makes changes permanent; ROLLBACK discards them."},
+          {"d": "MEDIUM", "q": "An index on a column mainly speeds up:", "o": ["Lookups and filtering on that column", "Every INSERT", "Table creation", "Backups"], "a": 0, "e": "Writes get slightly slower because the index must be updated."},
+          {"d": "MEDIUM", "q": "Durability guarantees that committed data:", "o": ["Survives crashes", "Is encrypted", "Is replicated to all servers", "Can be rolled back"], "a": 0, "e": "It is written to durable storage before commit returns."},
+          {"d": "HARD", "q": "A B-tree index supports which queries efficiently?", "o": ["Equality and range queries", "Only equality", "Only full-text search", "Only aggregates"], "a": 0, "e": "Keys are kept sorted."},
+          {"d": "HARD", "q": "A 'dirty read' means a transaction reads:", "o": ["Data written by another uncommitted transaction", "Deleted rows", "Encrypted data", "Its own writes"], "a": 0, "e": "READ COMMITTED and stricter isolation levels prevent it."}
+        ]}
+      ]}
+    ],
+    "prerequisites": [["SELECT Queries", "Relational Model"], ["Joins", "SELECT Queries"], ["Aggregation", "SELECT Queries"], ["Normalization", "Relational Model"], ["Normalization", "Joins"], ["Transactions & Indexes", "Joins"]]
+  }
+]

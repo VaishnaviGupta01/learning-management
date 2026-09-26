@@ -1,10 +1,11 @@
-"""Phase 7 - knowledge model: per-topic mastery score and classification band."""
+"""Phase 7 - knowledge model HTTP API. The scoring itself lives in scoring.py."""
 from typing import Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
 from . import config
+from .scoring import knowledge_score
 
 router = APIRouter(prefix="/api/knowledge", tags=["knowledge"])
 
@@ -37,39 +38,12 @@ class KnowledgeResponse(BaseModel):
     thresholds: dict[str, float]
 
 
-def classify(score: float) -> str:
-    for band, lower in sorted(config.KNOWLEDGE_THRESHOLDS.items(), key=lambda kv: kv[1], reverse=True):
-        if score >= lower:
-            return band
-    return "WEAK"
-
-
-def score_topic(evidence: TopicEvidence) -> TopicKnowledge:
-    """Weighted average of the available components.
-
-    Missing components are left out and the remaining weights are renormalised, so a student
-    with only a diagnostic result is scored on that alone instead of being pulled towards 0.
-    """
-    available = {
-        name: value
-        for name in config.KNOWLEDGE_WEIGHTS
-        if (value := getattr(evidence, name)) is not None and config.KNOWLEDGE_WEIGHTS[name] > 0
-    }
-    if not available:
-        return TopicKnowledge(topic_id=evidence.topic_id, score=0.0,
-                              classification="NOT_STARTED", components_used=[])
-
-    total_weight = sum(config.KNOWLEDGE_WEIGHTS[name] for name in available)
-    score = sum(config.KNOWLEDGE_WEIGHTS[name] * value for name, value in available.items()) / total_weight
-    score = round(score, 4)
-    return TopicKnowledge(topic_id=evidence.topic_id, score=score,
-                          classification=classify(score), components_used=list(available))
-
-
 @router.post("/score", response_model=KnowledgeResponse)
 def score(request: KnowledgeRequest) -> KnowledgeResponse:
-    return KnowledgeResponse(
-        results=[score_topic(t) for t in request.topics],
-        weights=config.KNOWLEDGE_WEIGHTS,
-        thresholds=config.KNOWLEDGE_THRESHOLDS,
-    )
+    results = []
+    for t in request.topics:
+        r = knowledge_score(t.model_dump(exclude={"topic_id"}))
+        results.append(TopicKnowledge(topic_id=t.topic_id, score=r.score, classification=r.classification,
+                                      components_used=r.components_used))
+    return KnowledgeResponse(results=results, weights=config.KNOWLEDGE_WEIGHTS,
+                             thresholds=config.KNOWLEDGE_THRESHOLDS)

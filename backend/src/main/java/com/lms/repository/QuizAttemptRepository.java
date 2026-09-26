@@ -1,6 +1,7 @@
 package com.lms.repository;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +24,10 @@ public interface QuizAttemptRepository extends JpaRepository<QuizAttempt, Long> 
 
     @Query("select avg(a.percentage) from QuizAttempt a where a.quiz.course.id = :courseId and a.submittedAt is not null")
     BigDecimal averagePercentageByCourse(@Param("courseId") Long courseId);
+
+    long countBySubmittedAtIsNotNull();
+    long countBySubmittedAtAfter(Instant after);
+
+    @Query("select count(a) from QuizAttempt a where a.quiz.course.id = :courseId and a.submittedAt is not null")
+    long countSubmittedByCourse(@Param("courseId") Long courseId);
 }

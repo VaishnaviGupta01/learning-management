@@ -11,6 +11,8 @@ __pycache__/
 .venv/
 venv/
 models/
+.pytest_cache/
+rag-service/data/
 
 # Node
 node_modules/

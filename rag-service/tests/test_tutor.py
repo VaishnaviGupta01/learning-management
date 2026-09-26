@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from app import config, tutor
 from app.main import app
+from app.retrieval import Retrieval, get_retriever
 
 
 class FakeMessages:
@@ -33,11 +34,17 @@ def fake_response(text="Recursion is a function calling itself.", stop_reason="e
     )
 
 
+class NoMaterialRetriever:
+    def retrieve(self, course_id, query):
+        return Retrieval(indexed=False, hits=[])
+
+
 @pytest.fixture
 def fake():
     messages = FakeMessages(response=fake_response())
     client = SimpleNamespace(beta=SimpleNamespace(messages=messages))
     app.dependency_overrides[tutor.get_client] = lambda: client
+    app.dependency_overrides[get_retriever] = lambda: NoMaterialRetriever()
     yield messages
     app.dependency_overrides.clear()
 

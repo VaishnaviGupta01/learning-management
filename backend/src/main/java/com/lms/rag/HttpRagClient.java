@@ -1,8 +1,15 @@
 package com.lms.rag;
 
+import java.util.function.Supplier;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
@@ -14,7 +21,7 @@ import com.lms.util.HttpRequestFactories;
 @Component
 public class HttpRagClient implements RagClient {
 
-    static final String DEFAULT_USER_MESSAGE = "The AI tutor is temporarily unavailable. Please try again shortly.";
+    static final String DEFAULT_USER_MESSAGE = "The AI service is temporarily unavailable. Please try again shortly.";
 
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
@@ -28,22 +35,59 @@ public class HttpRagClient implements RagClient {
 
     @Override
     public TutorReply chat(TutorRequest request) {
-        try {
-            TutorReply reply = restClient.post().uri("/api/tutor/chat")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(request)
-                    .retrieve()
-                    .body(TutorReply.class);
-            if (reply == null) {
-                throw new RagServiceException("Empty response from rag-service", DEFAULT_USER_MESSAGE, null);
+        return call("tutor chat", () -> restClient.post().uri("/api/tutor/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request)
+                .retrieve()
+                .body(TutorReply.class));
+    }
+
+    @Override
+    public IngestResult ingest(long documentId, long courseId, String title, String fileName, String contentType,
+                               byte[] data) {
+        HttpHeaders fileHeaders = new HttpHeaders();
+        fileHeaders.setContentType(MediaType.parseMediaType(contentType));
+        fileHeaders.setContentDispositionFormData("file", fileName);
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("document_id", String.valueOf(documentId));
+        parts.add("course_id", String.valueOf(courseId));
+        parts.add("title", title);
+        parts.add("file", new HttpEntity<>(new ByteArrayResource(data) {
+            @Override
+            public String getFilename() {
+                return fileName;
             }
-            return reply;
+        }, fileHeaders));
+
+        return call("ingest", () -> restClient.post().uri("/api/documents/ingest")
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(parts)
+                .retrieve()
+                .body(IngestResult.class));
+    }
+
+    @Override
+    public void deleteDocument(long courseId, long documentId) {
+        call("delete document", () -> restClient.delete()
+                .uri(b -> b.path("/api/documents/{id}").queryParam("course_id", courseId).build(documentId))
+                .retrieve()
+                .toBodilessEntity());
+    }
+
+    private <T> T call(String what, Supplier<T> request) {
+        try {
+            T body = request.get();
+            if (body == null) {
+                throw new RagServiceException("Empty response from rag-service (" + what + ")", DEFAULT_USER_MESSAGE, null);
+            }
+            return body;
         } catch (RestClientResponseException e) {
             // rag-service puts a user-safe explanation in FastAPI's "detail" field (e.g. "not configured")
-            throw new RagServiceException("rag-service returned " + e.getStatusCode().value(),
-                    detail(e.getResponseBodyAsString()), e);
+            int status = e.getStatusCode().value();
+            throw new RagServiceException("rag-service " + what + " returned " + status,
+                    detail(e.getResponseBodyAsString()), status, e);
         } catch (RestClientException e) {
-            throw new RagServiceException("rag-service call failed: " + e.getMessage(), DEFAULT_USER_MESSAGE, e);
+            throw new RagServiceException("rag-service " + what + " failed: " + e.getMessage(), DEFAULT_USER_MESSAGE, e);
         }
     }
 

@@ -12,4 +12,5 @@ public interface RecommendationRepository extends JpaRepository<Recommendation, 
     List<Recommendation> findByStudentIdAndTopicId(Long studentId, Long topicId);
     void deleteByStudentIdAndViewedFalse(Long studentId);
     void deleteByStudentId(Long studentId);
+    List<Recommendation> findByTopicModuleCourseIdOrderByStudentIdAscScoreDesc(Long courseId);
 }

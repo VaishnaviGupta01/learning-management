@@ -56,17 +56,42 @@ class HttpRagClientTest {
     void sendsSnakeCaseContextAndParsesReply() throws Exception {
         RagClient.TutorReply reply = client.chat(new RagClient.TutorRequest("What is a heap?",
                 List.of(new RagClient.Turn("user", "hi")),
-                new RagClient.StudentContext("Sam", "DSA", null, "Heaps", null,
+                new RagClient.StudentContext(4L, "Sam", "DSA", null, "Heaps", null,
                         new RagClient.KnowledgeLevel("Heaps", "WEAK", 0.2), List.of())));
 
-        assertThat(reply).isEqualTo(new RagClient.TutorReply("Hi", "claude-opus-5", "end_turn", false, 12, 3));
+        assertThat(reply).isEqualTo(new RagClient.TutorReply("Hi", "claude-opus-5", "end_turn", false, 12, 3,
+                false, false, null));
         JsonNode sent = mapper.readTree(lastBody.get());
         assertThat(sent.get("message").asText()).isEqualTo("What is a heap?");
         assertThat(sent.at("/history/0/role").asText()).isEqualTo("user");
         assertThat(sent.at("/context/student_name").asText()).isEqualTo("Sam");
+        assertThat(sent.at("/context/course_id").asLong()).isEqualTo(4);
         assertThat(sent.at("/context/topic_knowledge/mastery_score").asDouble()).isEqualTo(0.2);
         assertThat(sent.get("context").has("course_description")).isFalse(); // nulls omitted
         assertThat(lastUpgrade.get()).isNull();
+    }
+
+    @Test
+    void ingestSendsMultipartAndParsesChunks() throws Exception {
+        server.createContext("/api/documents/ingest", exchange -> {
+            lastBody.set(new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8));
+            lastUpgrade.set(exchange.getRequestHeaders().getFirst("Content-Type"));
+            byte[] bytes = ("{\"document_id\":9,\"course_id\":4,\"pages\":1,\"chunk_count\":1,\"chunks\":[{"
+                    + "\"chunk_index\":0,\"content\":\"Heaps\",\"token_count\":1,\"page_number\":1,"
+                    + "\"embedding_id\":\"4:1\"}]}").getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, bytes.length);
+            exchange.getResponseBody().write(bytes);
+            exchange.close();
+        });
+
+        RagClient.IngestResult result = client.ingest(9, 4, "Heap notes", "heaps.txt", "text/plain",
+                "Heaps".getBytes(StandardCharsets.UTF_8));
+
+        assertThat(result.chunks()).containsExactly(new RagClient.IngestedChunk(0, "Heaps", 1, 1, "4:1"));
+        assertThat(lastUpgrade.get()).startsWith("multipart/form-data");
+        assertThat(lastBody.get()).contains("name=\"document_id\"").contains("name=\"course_id\"")
+                .contains("filename=\"heaps.txt\"").contains("Heap notes");
     }
 
     @Test
