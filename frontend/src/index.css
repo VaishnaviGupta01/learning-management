@@ -1,0 +1,94 @@
+:root {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: #1f2933;
+  background: #f5f7fa;
+}
+
+body {
+  margin: 0;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.75rem 1.5rem;
+  background: #1f2933;
+  color: #fff;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.app-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.app-header a {
+  color: #cbd2d9;
+  text-decoration: none;
+}
+
+.app-header a.active {
+  color: #fff;
+  border-bottom: 2px solid #3ebd93;
+}
+
+.app-main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.system-status {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border: 1px solid #e4e7eb;
+  border-radius: 8px;
+}
+
+.system-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.system-status h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.system-status ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+}
+
+.system-status li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid #f0f4f8;
+}
+
+.system-status .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #9aa5b1;
+}
+
+.status-up .dot { background: #3ebd93; }
+.status-down .dot { background: #e12d39; }
+
+.system-status .name { font-weight: 600; min-width: 7rem; }
+.system-status .url { color: #7b8794; font-size: 0.85rem; flex: 1; }
+.system-status .extra { color: #52606d; font-size: 0.85rem; }
+.checked-at { color: #7b8794; font-size: 0.8rem; margin-bottom: 0; }

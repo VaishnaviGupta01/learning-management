@@ -1,0 +1,23 @@
+.env
+uploads/
+
+# Java
+backend/target/
+*.class
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+models/
+
+# Node
+node_modules/
+frontend/dist/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store

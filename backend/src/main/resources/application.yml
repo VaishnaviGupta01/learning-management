@@ -1,0 +1,39 @@
+server:
+  port: ${BACKEND_PORT:8080}
+
+spring:
+  application:
+    name: lms-backend
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:lms}
+    username: ${DB_USER:lms}
+    password: ${DB_PASSWORD:lms}
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    open-in-view: false
+    show-sql: ${JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true
+  servlet:
+    multipart:
+      max-file-size: ${MAX_UPLOAD_SIZE:25MB}
+      max-request-size: ${MAX_UPLOAD_SIZE:25MB}
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+  jwt:
+    secret: ${JWT_SECRET:change-me-to-a-long-random-string-of-at-least-32-bytes}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  services:
+    ml-url: ${ML_SERVICE_URL:http://localhost:8001}
+    rag-url: ${RAG_SERVICE_URL:http://localhost:8002}
+  upload-dir: ${UPLOAD_DIR:./uploads}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
