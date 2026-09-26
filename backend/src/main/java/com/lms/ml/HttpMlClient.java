@@ -1,17 +1,16 @@
 package com.lms.ml;
 
-import java.net.http.HttpClient;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+
+import com.lms.util.HttpRequestFactories;
 
 @Component
 public class HttpMlClient implements MlClient {
@@ -21,14 +20,7 @@ public class HttpMlClient implements MlClient {
     public HttpMlClient(RestClient.Builder builder,
                         @Value("${app.services.ml-url}") String baseUrl,
                         @Value("${app.services.ml-timeout-ms:3000}") long timeoutMs) {
-        // HTTP/1.1 explicitly: the JDK client defaults to HTTP/2 and sends an h2c upgrade request,
-        // which uvicorn rejects (the request body is then lost and FastAPI answers 422).
-        JdkClientHttpRequestFactory factory = new JdkClientHttpRequestFactory(HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .connectTimeout(Duration.ofMillis(timeoutMs))
-                .build());
-        factory.setReadTimeout(Duration.ofMillis(timeoutMs));
-        this.restClient = builder.baseUrl(baseUrl).requestFactory(factory).build();
+        this.restClient = builder.baseUrl(baseUrl).requestFactory(HttpRequestFactories.http11(timeoutMs)).build();
     }
 
     @Override

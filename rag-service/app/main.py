@@ -5,9 +5,12 @@ from datetime import datetime, timezone
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from . import config, tutor
+
 SERVICE_NAME = "rag-service"
 
 app = FastAPI(title="LMS RAG Service", version="0.1.0")
+app.include_router(tutor.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,6 +27,7 @@ def health():
     return {
         "status": "UP",
         "service": SERVICE_NAME,
-        "llm_configured": bool(os.getenv("ANTHROPIC_API_KEY")),
+        "llm_configured": config.llm_configured(),
+        "llm_model": config.LLM_MODEL,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }

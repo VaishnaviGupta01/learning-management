@@ -34,6 +34,10 @@ app:
     ml-url: ${ML_SERVICE_URL:http://localhost:8001}
     rag-url: ${RAG_SERVICE_URL:http://localhost:8002}
     ml-timeout-ms: ${ML_SERVICE_TIMEOUT_MS:3000}
+    rag-timeout-ms: ${RAG_SERVICE_TIMEOUT_MS:120000}   # LLM calls can take a while
+  adaptive:
+    window: ${ADAPTIVE_WINDOW:10}                        # last N answers per topic
+    default-question-count: ${ADAPTIVE_QUESTION_COUNT:10}
   recommendations:
     top-k: ${RECOMMENDATION_TOP_K:5}
     # a prerequisite counts as complete at this mastery score (0.60 = MODERATE band)

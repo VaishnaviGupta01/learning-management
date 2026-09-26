@@ -17,6 +17,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -54,6 +55,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
     }
 
+    @ExceptionHandler(ServiceUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handleUnavailable(ServiceUnavailableException ex, HttpServletRequest req) {
+        return build(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest req) {
         Map<String, String> fieldErrors = new LinkedHashMap<>();
@@ -65,6 +71,12 @@ public class GlobalExceptionHandler {
         ErrorResponse body = new ErrorResponse(Instant.now(), 400, "Bad Request", "Validation failed",
                 req.getRequestURI(), fieldErrors);
         return ResponseEntity.badRequest().body(body);
+    }
+
+    /** Constraint annotations on @RequestParam / @PathVariable arguments. */
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse> handleParamValidation(HandlerMethodValidationException ex, HttpServletRequest req) {
+        return build(HttpStatus.BAD_REQUEST, "Invalid request parameter", req);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

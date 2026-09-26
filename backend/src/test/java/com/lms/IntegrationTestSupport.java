@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /** MockMvc helpers shared by the end-to-end API tests. Every test creates its own users/courses. */
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(FakeMlClient.Config.class)
+@Import({FakeMlClient.Config.class, FakeRagClient.Config.class})
 public abstract class IntegrationTestSupport {
 
     protected static final String PASSWORD = "Password123!";

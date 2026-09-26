@@ -61,6 +61,8 @@ An initial admin is created from `ADMIN_EMAIL` / `ADMIN_PASSWORD` on startup (ad
 | Quizzes | `GET/POST /api/courses/{id}/quizzes`, `GET/DELETE /api/quizzes/{id}`, `PATCH /api/quizzes/{id}/publish` | write: instructor / admin |
 | Attempts | `POST /api/quizzes/{id}/attempts`, `POST /api/attempts/{id}/submit`, `GET /api/attempts/{id}`, `GET /api/attempts/me` | student |
 | Diagnostic | `POST /api/courses/{id}/diagnostic` (optional body `{"topicIds": [...]}`) | student |
+| Adaptive quiz | `POST /api/quizzes/adaptive/start` `{"courseId", "questionCount"?, "topicIds"?}` | student |
+| AI tutor | `POST /api/tutor/chat` `{"message", "courseId"?, "topicId"?, "history"?}`, `GET /api/tutor/history` | any signed-in user |
 | Progress | `GET /api/students/me/progress` | student |
 | Knowledge | `GET /api/students/me/topics/knowledge?courseId=` | student |
 | Recommendations | `GET /api/students/me/recommendations?courseId=` (recomputes and stores) | student |
@@ -76,6 +78,20 @@ Submitting a quiz updates course progress, logs a study session and recalculates
 
 Weights and thresholds live in [ml-service/app/config.py](ml-service/app/config.py) and can be overridden with JSON env vars.
 Tests: `cd ml-service && pip install -r requirements-dev.txt && pytest`.
+
+## Adaptive quizzes
+
+Per topic, the last `ADAPTIVE_WINDOW` answers decide the tier: accuracy > 80% moves one difficulty up,
+50-80% stays, < 50% moves down and adds the topic to the revision schedule. Questions are shared out by
+knowledge band (WEAK 4, NEEDS_PRACTICE 3, NOT_STARTED 2, MODERATE 2, STRONG 1) with Sainte-Laguë allocation.
+
+## AI tutor
+
+`rag-service` calls Claude (`LLM_MODEL`, default `claude-opus-5`) with the student's course, topic and
+knowledge level; the backend proxies the call and logs every exchange (including failures) to `ai_interactions`.
+Set `ANTHROPIC_API_KEY` in `.env` - it is only read by rag-service. Declined requests are retried server-side on
+Anthropic's recommended fallback model (`LLM_REFUSAL_FALLBACK=true`).
+Tests: `cd rag-service && pip install -r requirements-dev.txt && pytest`.
 
 ## Database changes
 
@@ -95,3 +111,5 @@ Errors use one JSON shape: `{timestamp, status, error, message, path, fieldError
 - [x] Phase 6: progress tracking (completion, accuracy, study sessions)
 - [x] Phase 7: knowledge model (ml-service scoring, per-topic mastery bands)
 - [x] Phase 8: recommendation engine with prerequisite gating
+- [x] Phase 9: adaptive quizzes
+- [x] Phase 10: AI tutor (no retrieval yet)

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lms.dto.quiz.AdaptiveQuizRequest;
+import com.lms.dto.quiz.AdaptiveQuizResponse;
 import com.lms.dto.quiz.AttemptResultResponse;
 import com.lms.dto.quiz.AttemptStartResponse;
 import com.lms.dto.quiz.AttemptSummaryResponse;
@@ -24,6 +26,7 @@ import com.lms.dto.quiz.QuizRequest;
 import com.lms.dto.quiz.QuizResponse;
 import com.lms.dto.quiz.SubmitAttemptRequest;
 import com.lms.security.UserPrincipal;
+import com.lms.service.AdaptiveQuizService;
 import com.lms.service.DiagnosticService;
 import com.lms.service.QuizService;
 
@@ -38,10 +41,13 @@ public class QuizController {
 
     private final QuizService quizService;
     private final DiagnosticService diagnosticService;
+    private final AdaptiveQuizService adaptiveQuizService;
 
-    public QuizController(QuizService quizService, DiagnosticService diagnosticService) {
+    public QuizController(QuizService quizService, DiagnosticService diagnosticService,
+                          AdaptiveQuizService adaptiveQuizService) {
         this.quizService = quizService;
         this.diagnosticService = diagnosticService;
+        this.adaptiveQuizService = adaptiveQuizService;
     }
 
     // ------------------------------------------------------------------ quizzes
@@ -76,6 +82,14 @@ public class QuizController {
     @PreAuthorize(MANAGERS)
     public void delete(@PathVariable Long quizId, @AuthenticationPrincipal UserPrincipal user) {
         quizService.deleteQuiz(quizId, user);
+    }
+
+    @PostMapping("/quizzes/adaptive/start")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(STUDENT)
+    public AdaptiveQuizResponse adaptive(@Valid @RequestBody AdaptiveQuizRequest request,
+                                         @AuthenticationPrincipal UserPrincipal user) {
+        return adaptiveQuizService.start(request, user);
     }
 
     @PostMapping("/courses/{courseId}/diagnostic")
